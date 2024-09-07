@@ -25,7 +25,7 @@ The Dashboard Stock project aims to provide users with a comprehensive tool for 
 Execute `pip install -r requirements.txt` to install the required libraries.
 
 ### Execution
-Execute `python stocks.py` to run the dashboard locally.
+Execute `gunicorn stocks:server` to run the dashboard locally.
 
 ### Developer
 Execute `python -m pre_commit run --all-files` to ensure code quality and formatting checks.
