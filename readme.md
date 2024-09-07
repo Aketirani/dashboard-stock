@@ -1,5 +1,4 @@
 # Dashboard Stock
-
 This project is a web-based dashboard for visualizing stock market data, specifically focusing on the S&P 500 index. The dashboard provides real-time data, historical performance, and investment prediction features.
 
 ### Table of Contents
