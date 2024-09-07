@@ -11,6 +11,7 @@ from dash import Input, Output, State, dcc, html
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 app = dash.Dash(__name__)
+server = app.server
 
 # Fetch S&P 500 data
 def fetch_data(period="1y"):
