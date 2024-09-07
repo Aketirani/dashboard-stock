@@ -1,15 +1,17 @@
 import logging
 import warnings
 from datetime import datetime
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+from typing import List, Optional, Tuple
 
 import dash
 import dash_daq as daq
+import pandas as pd
 import plotly.graph_objs as go
 import yfinance as yf
 from dash import Input, Output, State, dcc, html
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 # Suppress specific FutureWarning from yfinance
 warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -17,70 +19,40 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 app = dash.Dash(__name__)
 server = app.server
 
-# Fetch S&P 500 data
-def fetch_data(period="1y"):
+# Cache to store fetched data
+data_cache = {}
+
+
+def fetch_data(period: str = "1y") -> Optional[pd.DataFrame]:
+    """
+    Fetch S&P 500 data for the specified period.
+
+    :param period: str, default "1y" (1 year)
+        Valid periods: 1d,5d,1mo,3mo,6mo,1y,2y,5y,10y,ytd,max
+    :return: pandas.DataFrame or None
+    """
+    if period in data_cache:
+        logging.info(f"Using cached data for period {period}")
+        return data_cache[period]
+
     try:
         df = yf.download("^GSPC", period=period)
         if df.empty:
             raise ValueError("No data found for the given period.")
-        logging.info(f"Fetched data for period {period}: {df.head()}")  # Add logging
+        logging.info(f"Fetched data for period {period}: {df.head()}")
+        data_cache[period] = df
         return df
     except Exception as e:
         logging.error(f"Error fetching data: {e}")
         return None
 
 
-# Investment calculation function
-def calculate_investment(
-    initial_investment,
-    monthly_investment,
-    num_years,
-    annual_interest_rate,
-    ongoing_charges_rate,
-):
-    low_tax = 0.27
-    high_tax = 0.42
-    threshold_tax = 61000
-    months = 12
-    num_months = num_years * months
-    monthly_interest_rate = annual_interest_rate / months
-    investment_value = initial_investment
-    profit = 0
-    investment = [initial_investment]
-    money_invested = [initial_investment]
-    profits = [0]
+def create_layout() -> html.Div:
+    """
+    Create the layout for the Dash app.
 
-    for i in range(num_months):
-        interest = investment_value * monthly_interest_rate
-        investment_value += interest
-        investment_value += monthly_investment
-        profit = investment_value - initial_investment - (i + 1) * monthly_investment
-
-        if (i + 1) % months == 0:
-            if profit < threshold_tax:
-                tax = profit * low_tax
-            else:
-                tax = threshold_tax * low_tax + (profit - threshold_tax) * high_tax
-        else:
-            tax = 0
-
-        profit -= tax
-        ongoing_charges = investment_value * (ongoing_charges_rate / months)
-        investment_value -= ongoing_charges
-        total_money = initial_investment + (i + 1) * monthly_investment
-        investment.append(investment_value)
-        profits.append(profit)
-        money_invested.append(total_money)
-
-    money_invested_yearly = [round(num) for num in money_invested[0::months]]
-    investment_yearly = [round(num) for num in investment[0::months]]
-    profits_yearly = [round(num) for num in profits[0::months]]
-
-    return money_invested_yearly, investment_yearly, profits_yearly
-
-
-# Layout components
-def create_layout():
+    :return: dash.html.Div
+    """
     return html.Div(
         style={"backgroundColor": "#1e1e1e", "color": "#ffffff"},
         children=[
@@ -105,7 +77,12 @@ def create_layout():
     )
 
 
-def create_clock_and_date():
+def create_clock_and_date() -> html.Div:
+    """
+    Create the clock and date display components.
+
+    :return: dash.html.Div
+    """
     return html.Div(
         [
             daq.LEDDisplay(
@@ -139,28 +116,48 @@ def create_clock_and_date():
     )
 
 
-def create_period_buttons():
-    periods = ["1d", "1wk", "1mo", "3mo", "6mo", "1y", "3y", "5y", "ytd", "max"]
+def create_period_buttons() -> html.Div:
+    """
+    Create buttons for selecting different time periods for stock data.
+
+    :return: dash.html.Div
+    """
+    periods = ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
+    labels = {
+        "1d": "1 Day",
+        "1mo": "1 Month",
+        "3mo": "3 Months",
+        "6mo": "6 Months",
+        "1y": "1 Year",
+        "5y": "5 Years",
+        "ytd": "Year to Date",
+        "max": "Max",
+    }
     return html.Div(
-        [
+        style={"textAlign": "center", "margin": "20px"},
+        children=[
             html.Button(
-                period.replace("ytd", "Year to Date")
-                .replace("max", "Max")
-                .replace("mo", " Month")
-                .replace("wk", " Week")
-                .replace("d", " Day")
-                .replace("y", " Year"),
+                labels[period],
                 id=period,
                 n_clicks=0,
-                style={"margin": "5px"},
+                style={
+                    "margin": "5px",
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                    "border": "1px solid #000000",
+                },
             )
             for period in periods
         ],
-        style={"textAlign": "center"},
     )
 
 
-def create_investment_prediction_section():
+def create_investment_prediction_section() -> html.Div:
+    """
+    Create the investment prediction section with input fields and a prediction button.
+
+    :return: dash.html.Div
+    """
     return html.Div(
         [
             html.H2("Investment Prediction"),
@@ -191,7 +188,15 @@ def create_investment_prediction_section():
     )
 
 
-def create_input_field(label, id, value):
+def create_input_field(label: str, id: str, value: float) -> html.Div:
+    """
+    Create an input field with a label.
+
+    :param label: str, the label for the input field
+    :param id: str, the id for the input field
+    :param value: int or float, the default value for the input field
+    :return: dash.html.Div
+    """
     return html.Div(
         [
             html.Label(label),
@@ -206,19 +211,24 @@ def create_input_field(label, id, value):
     )
 
 
-# Callbacks
 @app.callback(
     Output("stock-graph", "figure"),
     [
         Input(period, "n_clicks")
-        for period in ["1d", "1wk", "1mo", "3mo", "6mo", "1y", "3y", "5y", "ytd", "max"]
+        for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
     ],
     [
         State(period, "id")
-        for period in ["1d", "1wk", "1mo", "3mo", "6mo", "1y", "3y", "5y", "ytd", "max"]
+        for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
     ],
 )
-def update_graph(*args):
+def update_graph(*args) -> go.Figure:
+    """
+    Update the stock graph based on the selected period.
+
+    :param args: list, the arguments passed from the callback context
+    :return: plotly.graph_objs.Figure
+    """
     ctx = dash.callback_context
     if not ctx.triggered:
         button_id = "ytd"
@@ -269,12 +279,24 @@ def update_graph(*args):
 
 
 @app.callback(Output("clock", "value"), Input("interval-component", "n_intervals"))
-def update_clock(n):
+def update_clock(n: int) -> str:
+    """
+    Update the clock display.
+
+    :param n: int, the number of intervals passed
+    :return: str, the current time in HH:MM:SS format
+    """
     return datetime.now().strftime("%H:%M:%S")
 
 
 @app.callback(Output("date", "children"), Input("interval-component", "n_intervals"))
-def update_date(n):
+def update_date(n: int) -> str:
+    """
+    Update the date display.
+
+    :param n: int, the number of intervals passed
+    :return: str, the current date in DD-MM-YYYY format
+    """
     return datetime.now().strftime("%d-%m-%Y")
 
 
@@ -290,13 +312,24 @@ def update_date(n):
     ],
 )
 def predict_investment(
-    n_clicks,
-    initial_investment,
-    monthly_investment,
-    num_years,
-    annual_interest_rate,
-    ongoing_charges_rate,
-):
+    n_clicks: int,
+    initial_investment: float,
+    monthly_investment: float,
+    num_years: int,
+    annual_interest_rate: float,
+    ongoing_charges_rate: float,
+) -> go.Figure:
+    """
+    Predict the investment value based on the input parameters.
+
+    :param n_clicks: int, the number of times the predict button has been clicked
+    :param initial_investment: float, the initial investment amount
+    :param monthly_investment: float, the monthly investment amount
+    :param num_years: int, the number of years for the investment
+    :param annual_interest_rate: float, the annual interest rate in percentage
+    :param ongoing_charges_rate: float, the ongoing charges rate in percentage
+    :return: plotly.graph_objs.Figure
+    """
     if (
         not initial_investment
         or not monthly_investment
@@ -349,6 +382,64 @@ def predict_investment(
         template="plotly_dark", xaxis_title="Years", yaxis_title="Amount (DKK)"
     )
     return fig
+
+
+def calculate_investment(
+    initial_investment: float,
+    monthly_investment: float,
+    num_years: int,
+    annual_interest_rate: float,
+    ongoing_charges_rate: float,
+) -> Tuple[List[int], List[int], List[int]]:
+    """
+    Calculate the investment value over time.
+
+    :param initial_investment: float, the initial investment amount
+    :param monthly_investment: float, the monthly investment amount
+    :param num_years: int, the number of years for the investment
+    :param annual_interest_rate: float, the annual interest rate
+    :param ongoing_charges_rate: float, the ongoing charges rate
+    :return: Tuple containing lists of yearly money invested, investment value, and profits
+    """
+    low_tax = 0.27
+    high_tax = 0.42
+    threshold_tax = 61000
+    months = 12
+    num_months = num_years * months
+    monthly_interest_rate = annual_interest_rate / months
+    investment_value = initial_investment
+    profit = 0
+    investment = [initial_investment]
+    money_invested = [initial_investment]
+    profits = [0]
+
+    for i in range(num_months):
+        interest = investment_value * monthly_interest_rate
+        investment_value += interest
+        investment_value += monthly_investment
+        profit = investment_value - initial_investment - (i + 1) * monthly_investment
+
+        if (i + 1) % months == 0:
+            if profit < threshold_tax:
+                tax = profit * low_tax
+            else:
+                tax = threshold_tax * low_tax + (profit - threshold_tax) * high_tax
+        else:
+            tax = 0
+
+        profit -= tax
+        ongoing_charges = investment_value * (ongoing_charges_rate / months)
+        investment_value -= ongoing_charges
+        total_money = initial_investment + (i + 1) * monthly_investment
+        investment.append(investment_value)
+        profits.append(profit)
+        money_invested.append(total_money)
+
+    money_invested_yearly = [round(num) for num in money_invested[0::months]]
+    investment_yearly = [round(num) for num in investment[0::months]]
+    profits_yearly = [round(num) for num in profits[0::months]]
+
+    return money_invested_yearly, investment_yearly, profits_yearly
 
 
 # Update clock and date every second
