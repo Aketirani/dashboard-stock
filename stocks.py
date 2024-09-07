@@ -1,5 +1,9 @@
+import logging
 import warnings
 from datetime import datetime
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 import dash
 import dash_daq as daq
@@ -19,9 +23,10 @@ def fetch_data(period="1y"):
         df = yf.download("^GSPC", period=period)
         if df.empty:
             raise ValueError("No data found for the given period.")
+        logging.info(f"Fetched data for period {period}: {df.head()}")  # Add logging
         return df
     except Exception as e:
-        print(f"Error fetching data: {e}")
+        logging.error(f"Error fetching data: {e}")
         return None
 
 
@@ -223,12 +228,16 @@ def update_graph(*args):
     period = button_id
     df = fetch_data(period=period)
     if df is None:
+        logging.error(f"No data available for period {period}")
         return go.Figure(
             layout=go.Layout(
                 title="No data available for the selected period",
                 template="plotly_dark",
             )
         )
+
+    logging.info(f"Updating graph for period: {period}")
+    logging.info(f"Data: {df.head()}")
 
     fig = go.Figure()
     fig.add_trace(
