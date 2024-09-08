@@ -1,10 +1,6 @@
 from dash import dcc, html
 
-from .utils import (
-    create_clock_and_date,
-    create_investment_prediction_section,
-    create_period_buttons,
-)
+from src.utils import Utils
 
 
 class Layout:
@@ -34,10 +30,10 @@ class Layout:
                         "maxWidth": "800px",
                     },
                 ),
-                create_clock_and_date(),
+                Utils.create_clock_and_date(),
                 html.H2("S&P 500 History", style={"textAlign": "center"}),
                 dcc.Graph(id="stock-graph"),
-                create_period_buttons(),
-                create_investment_prediction_section(),
+                Utils.create_period_buttons(),
+                Utils.create_investment_prediction_section(),
             ],
         )
