@@ -32,6 +32,7 @@ class StockDashboard:
         Callbacks.register_callbacks(self.app, self.data_fetcher)
 
 
+dashboard = StockDashboard()
+
 if __name__ == "__main__":
-    dashboard = StockDashboard()
     dashboard.app.run_server(debug=True)
