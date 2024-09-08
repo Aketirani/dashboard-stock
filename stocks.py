@@ -17,7 +17,7 @@ from dash import Input, Output, State, dcc, html
 class StockDashboard:
     def __init__(self):
         """
-        Initialize the StockDashboard class.
+        Initialize the StockDashboard class
         """
         logging.basicConfig(level=logging.WARNING)
         warnings.simplefilter(action="ignore", category=FutureWarning)
@@ -34,7 +34,7 @@ class StockDashboard:
     @contextmanager
     def suppress_stdout(self):
         """
-        Context manager to suppress standard output.
+        Context manager to suppress standard output
 
         :yield: None
         """
@@ -48,7 +48,7 @@ class StockDashboard:
 
     def fetch_data(self, period: str = "1y") -> Optional[pd.DataFrame]:
         """
-        Fetch stock data for a given period.
+        Fetch stock data for a given period
 
         :param period: str, the period for which to fetch data
         :return: Optional[pd.DataFrame], the fetched data as a DataFrame, or None if an error occurs
@@ -71,7 +71,7 @@ class StockDashboard:
 
     def create_layout(self) -> html.Div:
         """
-        Create the layout for the Dash app.
+        Create the layout for the Dash app
 
         :return: html.Div, the layout of the Dash app
         """
@@ -100,7 +100,7 @@ class StockDashboard:
 
     def create_clock_and_date(self) -> html.Div:
         """
-        Create the clock and date display.
+        Create the clock and date display
 
         :return: html.Div, the clock and date display
         """
@@ -138,7 +138,7 @@ class StockDashboard:
 
     def create_period_buttons(self) -> html.Div:
         """
-        Create buttons for selecting different time periods for stock data.
+        Create buttons for selecting different time periods for stock data
 
         :return: html.Div, the period selection buttons
         """
@@ -173,7 +173,7 @@ class StockDashboard:
 
     def create_investment_prediction_section(self) -> html.Div:
         """
-        Create the investment prediction section.
+        Create the investment prediction section
 
         :return: html.Div, the investment prediction section
         """
@@ -208,7 +208,7 @@ class StockDashboard:
 
     def create_input_field(self, label: str, id: str, value: float) -> html.Div:
         """
-        Create an input field for the investment prediction section.
+        Create an input field for the investment prediction section
 
         :param label: str, the label for the input field
         :param id: str, the ID for the input field
@@ -246,7 +246,7 @@ class StockDashboard:
         )
         def update_graph(*args) -> go.Figure:
             """
-            Update the stock graph based on the selected period.
+            Update the stock graph based on the selected period
 
             :param args: The arguments passed by the callback
             :return: go.Figure, the updated stock graph
@@ -300,7 +300,7 @@ class StockDashboard:
         )
         def update_clock(n: int) -> str:
             """
-            Update the clock display.
+            Update the clock display
 
             :param n: int, the number of intervals
             :return: str, the current time as a string
@@ -312,7 +312,7 @@ class StockDashboard:
         )
         def update_date(n: int) -> str:
             """
-            Update the date display.
+            Update the date display
 
             :param n: int, the number of intervals
             :return: str, the current date as a string
@@ -339,7 +339,7 @@ class StockDashboard:
             ongoing_charges_rate: float,
         ) -> go.Figure:
             """
-            Predict the investment value based on user inputs.
+            Predict the investment value based on user inputs
 
             :param n_clicks: int, the number of clicks on the predict button
             :param initial_investment: float, the initial investment amount
@@ -415,7 +415,7 @@ class StockDashboard:
         ongoing_charges_rate: float,
     ) -> Tuple[List[int], List[int], List[int]]:
         """
-        Calculate the investment value over time.
+        Calculate the investment value over time
 
         :param initial_investment: float, the initial investment amount
         :param monthly_investment: float, the monthly investment amount
@@ -467,6 +467,8 @@ class StockDashboard:
         return money_invested_yearly, investment_yearly, profits_yearly
 
 
+dashboard = StockDashboard()
+server = dashboard.server
+
 if __name__ == "__main__":
-    dashboard = StockDashboard()
     dashboard.app.run_server(debug=True)
