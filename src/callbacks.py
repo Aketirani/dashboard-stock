@@ -6,182 +6,190 @@ import pytz
 from dash import Input, Output, State
 
 
-def register_callbacks(app, data_fetcher):
+class Callbacks:
     """
-    Register the callbacks for the Dash app
-
-    :param app: Dash app instance
-    :param data_fetcher: DataFetcher instance
+    A class to register the callbacks for the Dash app
     """
 
-    @app.callback(
-        Output("stock-graph", "figure"),
-        [
-            Input(period, "n_clicks")
-            for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
-        ],
-        [
-            State(period, "id")
-            for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
-        ],
-    )
-    def update_graph(*args) -> go.Figure:
+    @staticmethod
+    def register_callbacks(app, data_fetcher):
         """
-        Update the stock graph based on the selected period
+        Register the callbacks for the Dash app
 
-        :param args: The arguments passed by the callback
-        :return: go.Figure, the updated stock graph
+        :param app: Dash app instance
+        :param data_fetcher: DataFetcher instance
         """
-        ctx = dash.callback_context
-        if not ctx.triggered:
-            button_id = "ytd"
-        else:
-            button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-        period = button_id
-        df = data_fetcher.fetch_data(period=period)
-        if df is None:
-            return go.Figure(
-                layout=go.Layout(
-                    title="No data available for the selected period",
-                    template="plotly_dark",
+        @app.callback(
+            Output("stock-graph", "figure"),
+            [
+                Input(period, "n_clicks")
+                for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
+            ],
+            [
+                State(period, "id")
+                for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
+            ],
+        )
+        def update_graph(*args) -> go.Figure:
+            """
+            Update the stock graph based on the selected period
+
+            :param args: The arguments passed by the callback
+            :return: go.Figure, the updated stock graph
+            """
+            ctx = dash.callback_context
+            if not ctx.triggered:
+                button_id = "ytd"
+            else:
+                button_id = ctx.triggered[0]["prop_id"].split(".")[0]
+
+            period = button_id
+            df = data_fetcher.fetch_data(period=period)
+            if df is None:
+                return go.Figure(
+                    layout=go.Layout(
+                        title="No data available for the selected period",
+                        template="plotly_dark",
+                    )
+                )
+
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=df.index,
+                    y=df["Close"],
+                    mode="lines",
+                    name="S&P 500",
+                    line=dict(color="white"),
                 )
             )
 
-        fig = go.Figure()
-        fig.add_trace(
-            go.Scatter(
-                x=df.index,
-                y=df["Close"],
-                mode="lines",
-                name="S&P 500",
-                line=dict(color="white"),
+            start_price = df["Close"].iloc[0]
+            end_price = df["Close"].iloc[-1]
+            percentage_change = ((end_price - start_price) / start_price) * 100
+            sign = "+" if percentage_change > 0 else ""
+            percentage_change_text = f"Change: {sign}{percentage_change:.2f}%"
+            current_price_text = f"Current Price: {end_price:.2f} DKK"
+
+            fig.update_layout(
+                template="plotly_dark",
+                xaxis_title="Date",
+                yaxis_title="Price (DKK)",
+                title=f"S&P 500 ({period.upper()}) - {percentage_change_text}, {current_price_text}",
             )
+
+            return fig
+
+        @app.callback(
+            Output("clock", "value"), Input("interval-component", "n_intervals")
         )
+        def update_clock(n: int) -> str:
+            """
+            Update the clock display
 
-        start_price = df["Close"].iloc[0]
-        end_price = df["Close"].iloc[-1]
-        percentage_change = ((end_price - start_price) / start_price) * 100
-        sign = "+" if percentage_change > 0 else ""
-        percentage_change_text = f"Change: {sign}{percentage_change:.2f}%"
-        current_price_text = f"Current Price: {end_price:.2f} DKK"
+            :param n: int, the number of intervals
+            :return: str, the current time as a string
+            """
+            local_tz = pytz.timezone("Europe/Copenhagen")
+            return datetime.now(local_tz).strftime("%H:%M:%S")
 
-        fig.update_layout(
-            template="plotly_dark",
-            xaxis_title="Date",
-            yaxis_title="Price (DKK)",
-            title=f"S&P 500 ({period.upper()}) - {percentage_change_text}, {current_price_text}",
+        @app.callback(
+            Output("date", "children"), Input("interval-component", "n_intervals")
         )
+        def update_date(n: int) -> str:
+            """
+            Update the date display
 
-        return fig
+            :param n: int, the number of intervals
+            :return: str, the current date as a string
+            """
+            local_tz = pytz.timezone("Europe/Copenhagen")
+            return datetime.now(local_tz).strftime("%d-%m-%Y")
 
-    @app.callback(Output("clock", "value"), Input("interval-component", "n_intervals"))
-    def update_clock(n: int) -> str:
-        """
-        Update the clock display
-
-        :param n: int, the number of intervals
-        :return: str, the current time as a string
-        """
-        local_tz = pytz.timezone("Europe/Copenhagen")
-        return datetime.now(local_tz).strftime("%H:%M:%S")
-
-    @app.callback(
-        Output("date", "children"), Input("interval-component", "n_intervals")
-    )
-    def update_date(n: int) -> str:
-        """
-        Update the date display
-
-        :param n: int, the number of intervals
-        :return: str, the current date as a string
-        """
-        local_tz = pytz.timezone("Europe/Copenhagen")
-        return datetime.now(local_tz).strftime("%d-%m-%Y")
-
-    @app.callback(
-        Output("prediction-graph", "figure"),
-        Input("predict-button", "n_clicks"),
-        [
-            State("initial-investment", "value"),
-            State("monthly-investment", "value"),
-            State("num-years", "value"),
-            State("annual-interest-rate", "value"),
-            State("ongoing-charges-rate", "value"),
-        ],
-    )
-    def predict_investment(
-        n_clicks: int,
-        initial_investment: float,
-        monthly_investment: float,
-        num_years: int,
-        annual_interest_rate: float,
-        ongoing_charges_rate: float,
-    ) -> go.Figure:
-        """
-        Predict the investment value based on user inputs
-
-        :param n_clicks: int, the number of clicks on the predict button
-        :param initial_investment: float, the initial investment amount
-        :param monthly_investment: float, the monthly investment amount
-        :param num_years: int, the number of years for the investment
-        :param annual_interest_rate: float, the annual interest rate
-        :param ongoing_charges_rate: float, the ongoing charges rate
-        :return: go.Figure, the investment prediction graph
-        """
-        if (
-            not initial_investment
-            or not monthly_investment
-            or not num_years
-            or not annual_interest_rate
-            or not ongoing_charges_rate
-        ):
-            return go.Figure()
-
-        annual_interest_rate /= 100
-        ongoing_charges_rate /= 100
-
-        (
-            money_invested_yearly,
-            investment_yearly,
-            profits_yearly,
-        ) = data_fetcher.calculate_investment(
-            initial_investment,
-            monthly_investment,
-            num_years,
-            annual_interest_rate,
-            ongoing_charges_rate,
+        @app.callback(
+            Output("prediction-graph", "figure"),
+            Input("predict-button", "n_clicks"),
+            [
+                State("initial-investment", "value"),
+                State("monthly-investment", "value"),
+                State("num-years", "value"),
+                State("annual-interest-rate", "value"),
+                State("ongoing-charges-rate", "value"),
+            ],
         )
+        def predict_investment(
+            n_clicks: int,
+            initial_investment: float,
+            monthly_investment: float,
+            num_years: int,
+            annual_interest_rate: float,
+            ongoing_charges_rate: float,
+        ) -> go.Figure:
+            """
+            Predict the investment value based on user inputs
 
-        fig = go.Figure()
-        fig.add_trace(
-            go.Scatter(
-                x=list(range(num_years + 1)),
-                y=money_invested_yearly,
-                mode="lines",
-                name="Money Invested (DKK)",
-                line=dict(color="blue"),
+            :param n_clicks: int, the number of clicks on the predict button
+            :param initial_investment: float, the initial investment amount
+            :param monthly_investment: float, the monthly investment amount
+            :param num_years: int, the number of years for the investment
+            :param annual_interest_rate: float, the annual interest rate
+            :param ongoing_charges_rate: float, the ongoing charges rate
+            :return: go.Figure, the investment prediction graph
+            """
+            if (
+                not initial_investment
+                or not monthly_investment
+                or not num_years
+                or not annual_interest_rate
+                or not ongoing_charges_rate
+            ):
+                return go.Figure()
+
+            annual_interest_rate /= 100
+            ongoing_charges_rate /= 100
+
+            (
+                money_invested_yearly,
+                investment_yearly,
+                profits_yearly,
+            ) = data_fetcher.calculate_investment(
+                initial_investment,
+                monthly_investment,
+                num_years,
+                annual_interest_rate,
+                ongoing_charges_rate,
             )
-        )
-        fig.add_trace(
-            go.Scatter(
-                x=list(range(num_years + 1)),
-                y=investment_yearly,
-                mode="lines",
-                name="Investment Value (DKK)",
-                line=dict(color="green"),
+
+            fig = go.Figure()
+            fig.add_trace(
+                go.Scatter(
+                    x=list(range(num_years + 1)),
+                    y=money_invested_yearly,
+                    mode="lines",
+                    name="Money Invested (DKK)",
+                    line=dict(color="blue"),
+                )
             )
-        )
-        fig.add_trace(
-            go.Scatter(
-                x=list(range(num_years + 1)),
-                y=profits_yearly,
-                mode="lines",
-                name="Profit (DKK)",
-                line=dict(color="orange"),
+            fig.add_trace(
+                go.Scatter(
+                    x=list(range(num_years + 1)),
+                    y=investment_yearly,
+                    mode="lines",
+                    name="Investment Value (DKK)",
+                    line=dict(color="green"),
+                )
             )
-        )
-        fig.update_layout(
-            template="plotly_dark", xaxis_title="Years", yaxis_title="Amount (DKK)"
-        )
-        return fig
+            fig.add_trace(
+                go.Scatter(
+                    x=list(range(num_years + 1)),
+                    y=profits_yearly,
+                    mode="lines",
+                    name="Profit (DKK)",
+                    line=dict(color="orange"),
+                )
+            )
+            fig.update_layout(
+                template="plotly_dark", xaxis_title="Years", yaxis_title="Amount (DKK)"
+            )
+            return fig

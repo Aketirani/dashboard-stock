@@ -12,10 +12,13 @@ class DataFetcher:
     """
     A class to fetch and cache stock data, and calculate investment values over time
 
-    data_cache: dict, A cache to store fetched data.
+    data_cache: dict, a cache to store fetched data
     """
 
     def __init__(self):
+        """
+        Initialize the DataFetcher class
+        """
         self.data_cache = {}
 
     @contextmanager
@@ -48,7 +51,7 @@ class DataFetcher:
             with self.suppress_stdout():
                 df = yf.download("^GSPC", period=period)
             if df.empty:
-                raise ValueError("No data found for the given period.")
+                raise ValueError("No data found for the given period")
             logging.info(f"Fetched data for period {period}: {df.head()}")
             self.data_cache[period] = df
             return df
