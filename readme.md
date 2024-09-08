@@ -11,7 +11,10 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 
 ### Structure
 ```
-┌── .gitignore                  <-- Git Ignore Configuration
+┌── src                         <-- Source Folder
+|   └── *.py                    <-- Source Files
+|
+├── .gitignore                  <-- Git Ignore Configuration
 |
 ├── .pre-commit-config.yaml     <-- Pre-Commit Configuration
 |
