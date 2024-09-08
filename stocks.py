@@ -33,6 +33,7 @@ class StockDashboard:
 
 
 dashboard = StockDashboard()
+server = dashboard.server
 
 if __name__ == "__main__":
     dashboard.app.run_server(debug=True)

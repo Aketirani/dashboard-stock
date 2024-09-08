@@ -3,4 +3,4 @@ services:
     name: my-stock-dashboard
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn stocks:dashboard.server"
+    startCommand: "gunicorn stocks:server"
