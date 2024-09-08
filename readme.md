@@ -24,7 +24,7 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 |
 ├── requirements.txt            <-- Package Requirements
 |
-└── main.py                     <-- Main Python Script
+└── stocks.py                   <-- Main Python Script
 ```
 
 ### Features
