@@ -8,6 +8,11 @@ from .utils import (
 
 
 def create_layout() -> html.Div:
+    """
+    Create the layout for the Dash app.
+
+    :return: html.Div, the layout of the Dash app
+    """
     return html.Div(
         style={"backgroundColor": "#1e1e1e", "color": "#ffffff"},
         children=[
