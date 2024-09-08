@@ -4,9 +4,9 @@ import warnings
 import dash
 from dash import dcc
 
-from src.callbacks import register_callbacks
+from src.callbacks import Callbacks
 from src.data_fetcher import DataFetcher
-from src.layout import create_layout
+from src.layout import Layout
 
 
 class StockDashboard:
@@ -25,11 +25,11 @@ class StockDashboard:
         self.app = dash.Dash(__name__)
         self.server = self.app.server
         self.data_fetcher = DataFetcher()
-        self.app.layout = create_layout()
+        self.app.layout = Layout.create_layout()
         self.app.layout.children.append(
             dcc.Interval(id="interval-component", interval=1 * 1000, n_intervals=0)
         )
-        register_callbacks(self.app, self.data_fetcher)
+        Callbacks.register_callbacks(self.app, self.data_fetcher)
 
 
 if __name__ == "__main__":
