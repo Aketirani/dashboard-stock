@@ -1,19 +1,28 @@
-# Dashboard Stock
-This project is a web-based dashboard for visualizing stock market data, specifically focusing on the S&P 500 index. The dashboard provides real-time data, historical performance, and investment prediction features.
+# Stock Market Dashboard
+This project is a web-based dashboard for visualizing S&P 500 index data. It offers real-time stock data, historical performance visualization, and investment prediction tools. The dashboard is deployed on Render, enabling continuous deployment from a GitHub repository.
 
 ### Table of Contents
-- [Project Overview](#project-overview)
 - [Structure](#structure)
 - [Features](#features)
+- [Installation](#installation)
 - [Requirements](#requirements)
 - [Execution](#execution)
 - [Developer](#developer)
 
-### Project Overview
-The Dashboard Stock project aims to provide users with a comprehensive tool for monitoring and analyzing stock market data. It leverages the Dash framework for the web interface and integrates with various data sources to provide up-to-date information and visualizations.
-
 ### Structure
-
+```
+├── .gitignore                  <-- Git Ignore Configuration
+|
+├── .pre-commit-config.yaml     <-- Pre-Commit Configuration
+|
+├── readme.md                   <-- You Are Here
+|
+├── render.yaml                 <-- Render Configuration
+|
+├── requirements.txt            <-- Package Requirements
+|
+├── stocks.py                   <-- Main Python Script
+```
 
 ### Features
 - **Real-time Data**: Displays real-time stock data for the S&P 500 index.
@@ -21,11 +30,25 @@ The Dashboard Stock project aims to provide users with a comprehensive tool for 
 - **Investment Prediction**: Provides tools for predicting future investment values.
 - **Clock and Date**: Displays the current time and date on the dashboard.
 
+### Installation
+1. Create a user account on [GitHub](https://github.com/) if you don't already have one.
+2. Create a new repository on GitHub for your project and push your code to it.
+3. Create a user account on [Render](https://render.com/).
+4. Connect your GitHub account to Render by granting it access to your repository.
+5. Use Render to build and deploy your application from the GitHub repository:
+   - Select "New +" and choose "Web Service"
+   - Connect to your GitHub repository
+   - Configure the build and start command
+   - Choose a plan and deploy
+6. Once deployed, share the web link provided at the top of the page to access your dashboard.
+
+This setup allows for continuous deployment, where changes pushed to your GitHub repository will automatically trigger a new build and deployment on Render.
+
 ### Requirements
 Execute `pip install -r requirements.txt` to install the required libraries.
 
 ### Execution
-Execute `gunicorn stocks:server` to run the dashboard locally.
+Execute `python stocks.py` to run the dashboard locally.
 
 ### Developer
 Execute `python -m pre_commit run --all-files` to ensure code quality and formatting checks.
