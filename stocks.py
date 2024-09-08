@@ -10,6 +10,7 @@ import dash
 import dash_daq as daq
 import pandas as pd
 import plotly.graph_objs as go
+import pytz
 import yfinance as yf
 from dash import Input, Output, State, dcc, html
 
@@ -305,7 +306,8 @@ class StockDashboard:
             :param n: int, the number of intervals
             :return: str, the current time as a string
             """
-            return datetime.now().strftime("%H:%M:%S")
+            local_tz = pytz.timezone("Europe/Copenhagen")
+            return datetime.now(local_tz).strftime("%H:%M:%S")
 
         @self.app.callback(
             Output("date", "children"), Input("interval-component", "n_intervals")
@@ -317,7 +319,8 @@ class StockDashboard:
             :param n: int, the number of intervals
             :return: str, the current date as a string
             """
-            return datetime.now().strftime("%d-%m-%Y")
+            local_tz = pytz.timezone("Europe/Copenhagen")
+            return datetime.now(local_tz).strftime("%d-%m-%Y")
 
         @self.app.callback(
             Output("prediction-graph", "figure"),
