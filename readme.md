@@ -11,7 +11,7 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 
 ### Structure
 ```
-├── .gitignore                  <-- Git Ignore Configuration
+┌── .gitignore                  <-- Git Ignore Configuration
 |
 ├── .pre-commit-config.yaml     <-- Pre-Commit Configuration
 |
@@ -21,7 +21,7 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 |
 ├── requirements.txt            <-- Package Requirements
 |
-├── stocks.py                   <-- Main Python Script
+└── stocks.py                   <-- Main Python Script
 ```
 
 ### Features
