@@ -37,6 +37,12 @@ class DataFetcher:
                 sys.stdout = old_stdout
 
     def fetch_data(self, period: str = "1y") -> Optional[pd.DataFrame]:
+        """
+        Fetch stock data for a given period and cache it
+
+        :param period: str, the period for which to fetch data
+        :return: Optional[pd.DataFrame], the fetched data as a DataFrame, or None if an error occurs
+        """
         if period in self.data_cache:
             logging.info(f"Using cached data for period {period}")
             return self.data_cache[period]
