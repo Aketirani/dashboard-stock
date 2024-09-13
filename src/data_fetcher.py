@@ -37,19 +37,15 @@ class DataFetcher:
                 sys.stdout = old_stdout
 
     def fetch_data(self, period: str = "1y") -> Optional[pd.DataFrame]:
-        """
-        Fetch stock data for a given period
-
-        :param period: str, the period for which to fetch data
-        :return: Optional[pd.DataFrame], the fetched data as a DataFrame, or None if an error occurs
-        """
         if period in self.data_cache:
             logging.info(f"Using cached data for period {period}")
             return self.data_cache[period]
-
         try:
             with self.suppress_stdout():
-                df = yf.download("^GSPC", period=period)
+                if period == "1d":
+                    df = yf.download("^GSPC", period="2d", interval="1m")
+                else:
+                    df = yf.download("^GSPC", period=period)
             if df.empty:
                 raise ValueError("No data found for the given period")
             logging.info(f"Fetched data for period {period}: {df.head()}")

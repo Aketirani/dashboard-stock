@@ -24,11 +24,31 @@ class Callbacks:
             Output("stock-graph", "figure"),
             [
                 Input(period, "n_clicks")
-                for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
+                for period in [
+                    "1d",
+                    "1wk",
+                    "1mo",
+                    "3mo",
+                    "6mo",
+                    "1y",
+                    "5y",
+                    "ytd",
+                    "max",
+                ]
             ],
             [
                 State(period, "id")
-                for period in ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
+                for period in [
+                    "1d",
+                    "1wk",
+                    "1mo",
+                    "3mo",
+                    "6mo",
+                    "1y",
+                    "5y",
+                    "ytd",
+                    "max",
+                ]
             ],
         )
         def update_graph(*args) -> go.Figure:
@@ -73,10 +93,10 @@ class Callbacks:
             current_price_text = f"Current Price: {end_price:.2f} DKK"
 
             fig.update_layout(
-                template="plotly_dark",
+                title=f"S&P 500 ({period.upper()}) - {percentage_change_text}, {current_price_text}",
                 xaxis_title="Date",
                 yaxis_title="Price (DKK)",
-                title=f"S&P 500 ({period.upper()}) - {percentage_change_text}, {current_price_text}",
+                template="plotly_dark",
             )
 
             return fig

@@ -55,33 +55,20 @@ class Utils:
 
         :return: html.Div, the period selection buttons
         """
-        periods = ["1d", "1mo", "3mo", "6mo", "1y", "5y", "ytd", "max"]
-        labels = {
-            "1d": "1 Day",
-            "1mo": "1 Month",
-            "3mo": "3 Months",
-            "6mo": "6 Months",
-            "1y": "1 Year",
-            "5y": "5 Years",
-            "ytd": "Year to Date",
-            "max": "Max",
-        }
+        button_style = {"margin": "5px"}
         return html.Div(
-            style={"textAlign": "center", "margin": "20px"},
             children=[
-                html.Button(
-                    labels[period],
-                    id=period,
-                    n_clicks=0,
-                    style={
-                        "margin": "5px",
-                        "backgroundColor": "#ffffff",
-                        "color": "#000000",
-                        "border": "1px solid #000000",
-                    },
-                )
-                for period in periods
+                html.Button("1 Day", id="1d", style=button_style),
+                html.Button("1 Week", id="1wk", style=button_style),
+                html.Button("1 Month", id="1mo", style=button_style),
+                html.Button("3 Months", id="3mo", style=button_style),
+                html.Button("6 Months", id="6mo", style=button_style),
+                html.Button("1 Year", id="1y", style=button_style),
+                html.Button("5 Years", id="5y", style=button_style),
+                html.Button("Year To Date", id="ytd", style=button_style),
+                html.Button("Max Date", id="max", style=button_style),
             ],
+            style={"textAlign": "center", "margin": "20px 0"},
         )
 
     @staticmethod
