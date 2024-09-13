@@ -26,7 +26,7 @@ class Callbacks:
                 Input(period, "n_clicks")
                 for period in [
                     "1d",
-                    "1wk",
+                    "5d",
                     "1mo",
                     "3mo",
                     "6mo",
@@ -40,7 +40,7 @@ class Callbacks:
                 State(period, "id")
                 for period in [
                     "1d",
-                    "1wk",
+                    "5d",
                     "1mo",
                     "3mo",
                     "6mo",

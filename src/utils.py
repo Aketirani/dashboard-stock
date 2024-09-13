@@ -59,7 +59,7 @@ class Utils:
         return html.Div(
             children=[
                 html.Button("1 Day", id="1d", style=button_style),
-                html.Button("1 Week", id="1wk", style=button_style),
+                html.Button("5 Days", id="5d", style=button_style),
                 html.Button("1 Month", id="1mo", style=button_style),
                 html.Button("3 Months", id="3mo", style=button_style),
                 html.Button("6 Months", id="6mo", style=button_style),

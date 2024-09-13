@@ -49,7 +49,9 @@ class DataFetcher:
         try:
             with self.suppress_stdout():
                 if period == "1d":
-                    df = yf.download("^GSPC", period="2d", interval="1m")
+                    df = yf.download("^GSPC", period=period, interval="1m")
+                elif period == "5d":
+                    df = yf.download("^GSPC", period=period, interval="1h")
                 else:
                     df = yf.download("^GSPC", period=period)
             if df.empty:
