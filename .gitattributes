@@ -1,0 +1,2 @@
+# Recognize `.py` files as Python
+*.py linguist-language=Python
