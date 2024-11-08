@@ -83,7 +83,7 @@ class DataFetcher:
         """
         low_tax = 0.27
         high_tax = 0.42
-        threshold_tax = 61000
+        threshold_tax = 80000
         months = 12
         num_months = num_years * months
         monthly_interest_rate = annual_interest_rate / months
