@@ -91,11 +91,9 @@ class Callbacks:
             end_price = df["Close"].iloc[-1]
             percentage_change = ((end_price - start_price) / start_price) * 100
             sign = "+" if percentage_change > 0 else ""
-            percentage_change_text = f"Change: {sign}{percentage_change:.2f}%"
-            current_price_text = f"Current Price: {end_price:.2f} DKK"
 
             fig.update_layout(
-                title=f"S&P 500 ({button_id.upper()}) - {percentage_change_text}, {current_price_text}",
+                title=f"Period: {button_id.upper()}, Return: {sign}{percentage_change:.2f}%, Price: {end_price:.2f} DKK",
                 xaxis_title="Date",
                 yaxis_title="Price (DKK)",
                 template="plotly_dark",
@@ -156,9 +154,9 @@ class Callbacks:
                 ]
             )
             fig.update_layout(
-                title="Yearly Percentage Change in Returns",
+                title="Yearly Percentage Returns",
                 xaxis_title="Year",
-                yaxis_title="Percentage Change (%)",
+                yaxis_title="Return (%)",
                 template="plotly_dark",
             )
             return fig
