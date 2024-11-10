@@ -51,22 +51,24 @@ class Callbacks:
                 ]
             ],
         )
-        def update_graph(*args) -> go.Figure:
-            """
-            Update the stock graph based on the selected period
-
-            :param args: The arguments passed by the callback
-            :return: go.Figure, the updated stock graph
-            """
+        def update_graph(*args):
             ctx = dash.callback_context
             if not ctx.triggered:
                 button_id = "ytd"
             else:
                 button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-            period = button_id
-            df = data_fetcher.fetch_data(period=period)
-            if df is None:
+            if button_id == "ytd":
+                start_date = datetime(datetime.now().year, 1, 1)
+                df = data_fetcher.fetch_data(period="max")
+                df = df[df.index >= start_date]
+            elif button_id == "max":
+                df = data_fetcher.fetch_data(period="max")
+            else:
+                period = button_id
+                df = data_fetcher.fetch_data(period=period)
+
+            if df is None or df.empty:
                 return go.Figure(
                     layout=go.Layout(
                         title="No data available for the selected period",
@@ -89,11 +91,9 @@ class Callbacks:
             end_price = df["Close"].iloc[-1]
             percentage_change = ((end_price - start_price) / start_price) * 100
             sign = "+" if percentage_change > 0 else ""
-            percentage_change_text = f"Change: {sign}{percentage_change:.2f}%"
-            current_price_text = f"Current Price: {end_price:.2f} DKK"
 
             fig.update_layout(
-                title=f"S&P 500 ({period.upper()}) - {percentage_change_text}, {current_price_text}",
+                title=f"Period: {button_id.upper()}, Return: {sign}{percentage_change:.2f}%, Price: {end_price:.2f} DKK",
                 xaxis_title="Date",
                 yaxis_title="Price (DKK)",
                 template="plotly_dark",
@@ -126,6 +126,40 @@ class Callbacks:
             """
             local_tz = pytz.timezone("Europe/Copenhagen")
             return datetime.now(local_tz).strftime("%d-%m-%Y")
+
+        @app.callback(
+            Output("yearly-returns-graph", "figure"),
+            Input("interval-component", "n_intervals"),
+        )
+        def update_yearly_returns_graph(n):
+            df = data_fetcher.calculate_yearly_returns()
+            if df.empty:
+                return go.Figure(
+                    layout=go.Layout(
+                        title="No data available for Yearly Returns",
+                        template="plotly_dark",
+                    )
+                )
+
+            fig = go.Figure(
+                data=[
+                    go.Bar(
+                        x=df["Year"],
+                        y=df["Percentage Change"],
+                        marker_color=[
+                            "green" if val > 0 else "red"
+                            for val in df["Percentage Change"]
+                        ],
+                    )
+                ]
+            )
+            fig.update_layout(
+                title="Yearly Percentage Returns",
+                xaxis_title="Year",
+                yaxis_title="Return (%)",
+                template="plotly_dark",
+            )
+            return fig
 
         @app.callback(
             Output("prediction-graph", "figure"),
