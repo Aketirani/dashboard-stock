@@ -63,6 +63,17 @@ class DataFetcher:
             logging.error(f"Error fetching data: {e}")
             return None
 
+    def calculate_yearly_returns(self) -> pd.DataFrame:
+        df = self.fetch_data(period="max")
+        if df is not None and "Close" in df.columns:
+            df["Year"] = df.index.year
+            yearly_prices = df.groupby("Year")["Close"].last()
+            yearly_returns = yearly_prices.pct_change() * 100
+            yearly_returns_df = yearly_returns.reset_index()
+            yearly_returns_df.columns = ["Year", "Percentage Change"]
+            return yearly_returns_df
+        return pd.DataFrame(columns=["Year", "Percentage Change"])
+
     def calculate_investment(
         self,
         initial_investment: float,

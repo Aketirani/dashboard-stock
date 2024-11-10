@@ -34,6 +34,7 @@ class Layout:
                 html.H2("S&P 500 History", style={"textAlign": "center"}),
                 dcc.Graph(id="stock-graph"),
                 Utils.create_period_buttons(),
+                dcc.Graph(id="yearly-returns-graph"),
                 Utils.create_investment_prediction_section(),
             ],
         )
