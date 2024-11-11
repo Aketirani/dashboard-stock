@@ -4,6 +4,7 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 ### Table of Contents 📖
 - [Structure](#structure) 📂
 - [Features](#features) 🧠
+- [Preview](#preview) 👓
 - [Installation](#installation) 📦
 - [Requirements](#requirements) 📑
 - [Execution](#execution) 🏃‍♂️
