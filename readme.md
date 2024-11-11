@@ -33,6 +33,9 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 - **Investment Prediction**: Provides tools for predicting future investment values.
 - **Clock and Date**: Displays the current time and date on the dashboard.
 
+### Preview
+![Figure1](images/WebPage.png)
+
 ### Installation
 1. Create a user account on [GitHub](https://github.com/) if you don't already have one.
 2. Create a new repository on GitHub for your project and push your code to it.
