@@ -12,7 +12,10 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 
 ### Structure
 ```
-┌── src                         <-- Source Folder
+┌── images                      <-- Images Folder
+|   └── *.png                   <-- Images Files
+|
+├── src                         <-- Source Folder
 |   └── *.py                    <-- Source Files
 |
 ├── .gitignore                  <-- Git Ignore Configuration
