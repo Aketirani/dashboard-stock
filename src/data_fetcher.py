@@ -64,6 +64,11 @@ class DataFetcher:
             return None
 
     def calculate_yearly_returns(self) -> pd.DataFrame:
+        """
+        Calculate the yearly percentage change in stock prices based on the maximum available data period.
+
+        :return: pd.DataFrame, containing the annual percentage change in the stock price
+        """
         df = self.fetch_data(period="max")
         if df is not None and "Close" in df.columns:
             df["Year"] = df.index.year

@@ -84,6 +84,7 @@ class Callbacks:
                     mode="lines",
                     name="S&P 500",
                     line=dict(color="white"),
+                    showlegend=True,
                 )
             )
 
@@ -132,6 +133,12 @@ class Callbacks:
             Input("interval-component", "n_intervals"),
         )
         def update_yearly_returns_graph(n):
+            """
+            Update the yearly returns graph.
+
+            :param n: int, the number of intervals from the interval component
+            :return: go.Figure, a Plotly figure with yearly returns and an average reference line
+            """
             df = data_fetcher.calculate_yearly_returns()
             if df.empty:
                 return go.Figure(
@@ -141,24 +148,41 @@ class Callbacks:
                     )
                 )
 
-            fig = go.Figure(
-                data=[
-                    go.Bar(
-                        x=df["Year"],
-                        y=df["Percentage Change"],
-                        marker_color=[
-                            "green" if val > 0 else "red"
-                            for val in df["Percentage Change"]
-                        ],
-                    )
-                ]
+            avg_percentage_change = df["Percentage Change"].mean()
+
+            positive_returns = go.Bar(
+                x=df["Year"],
+                y=df["Percentage Change"].where(df["Percentage Change"] > 0),
+                marker_color="green",
+                name="Positive",
             )
+
+            negative_returns = go.Bar(
+                x=df["Year"],
+                y=df["Percentage Change"].where(df["Percentage Change"] < 0),
+                marker_color="red",
+                name="Negative",
+            )
+
+            fig = go.Figure(data=[positive_returns, negative_returns])
+
+            fig.add_trace(
+                go.Scatter(
+                    x=df["Year"],
+                    y=[avg_percentage_change] * len(df),
+                    mode="lines",
+                    name="Average",
+                    line=dict(color="blue", dash="dash"),
+                )
+            )
+
             fig.update_layout(
                 title="Yearly Percentage Returns",
                 xaxis_title="Year",
                 yaxis_title="Return (%)",
                 template="plotly_dark",
             )
+
             return fig
 
         @app.callback(
@@ -221,7 +245,7 @@ class Callbacks:
                     x=list(range(num_years + 1)),
                     y=money_invested_yearly,
                     mode="lines",
-                    name="Money Invested (DKK)",
+                    name="Invested",
                     line=dict(color="blue"),
                 )
             )
@@ -230,7 +254,7 @@ class Callbacks:
                     x=list(range(num_years + 1)),
                     y=investment_yearly,
                     mode="lines",
-                    name="Investment Value (DKK)",
+                    name="Value",
                     line=dict(color="green"),
                 )
             )
@@ -239,11 +263,12 @@ class Callbacks:
                     x=list(range(num_years + 1)),
                     y=profits_yearly,
                     mode="lines",
-                    name="Profit (DKK)",
+                    name="Profit",
                     line=dict(color="orange"),
                 )
             )
             fig.update_layout(
                 template="plotly_dark", xaxis_title="Years", yaxis_title="Amount (DKK)"
             )
+
             return fig
