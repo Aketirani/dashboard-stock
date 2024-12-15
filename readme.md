@@ -3,6 +3,7 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 
 ### Table of Contents 📖
 - [Structure](#structure) 📂
+- [Dashboard](#dashboard) 🔗
 - [Features](#features) 🧠
 - [Preview](#preview) 👓
 - [Installation](#installation) 📦
@@ -30,6 +31,9 @@ This project is a web-based dashboard for visualizing S&P 500 index data. It off
 |
 └── stocks.py                   <-- Main Python Script
 ```
+
+### Dashboard
+Access the live dashboard [here](https://dashboard-stock-ze75.onrender.com).
 
 ### Features
 - **Real-time Data**: Displays real-time stock data for the S&P 500 index.
