@@ -1,6 +1,8 @@
 # Stock Market Dashboard 📉📈
 This project is a web-based dashboard for visualizing S&P 500 index data. It offers real-time stock data, historical performance visualization, and investment prediction tools. The dashboard is deployed on Render, enabling continuous deployment from a GitHub repository.
 
+![ANC Gif](images/stocks.gif)
+
 ### Table of Contents 📖
 - [Structure](#structure) 📂
 - [Dashboard](#dashboard) 🔗
