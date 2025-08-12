@@ -108,7 +108,8 @@ class Callbacks:
             return fig
 
         @app.callback(
-            Output("clock", "value"), Input("interval-component", "n_intervals")
+            Output("clock", "children"),
+            Input("interval-component", "n_intervals"),
         )
         def update_clock(n: int) -> str:
             """

@@ -16,33 +16,36 @@ class Utils:
 
         :return: html.Div, the clock and date display
         """
+        common_style = {
+            "color": "#00cc96",
+            "fontSize": "30px",
+            "backgroundColor": "#1e1e1e",
+            "margin": "10px",
+            "position": "absolute",
+            "padding": "5px 10px",
+            "borderRadius": "5px",
+        }
+
         return html.Div(
             [
-                daq.LEDDisplay(
+                html.Div(
                     id="clock",
-                    value=datetime.now().strftime("%H:%M:%S"),
-                    color="#00cc96",
-                    backgroundColor="#1e1e1e",
-                    size=24,
+                    children=datetime.now().strftime("%H:%M:%S"),
                     style={
-                        "textAlign": "left",
-                        "margin": "10px",
-                        "position": "absolute",
+                        **common_style,
                         "top": "30px",
                         "left": "10px",
+                        "textAlign": "left",
                     },
                 ),
                 html.Div(
                     id="date",
+                    children=datetime.now().strftime("%Y-%m-%d"),
                     style={
-                        "textAlign": "right",
-                        "margin": "10px",
-                        "color": "#00cc96",
-                        "fontSize": "30px",
-                        "position": "absolute",
+                        **common_style,
                         "top": "30px",
                         "right": "10px",
-                        "backgroundColor": "#1e1e1e",
+                        "textAlign": "right",
                     },
                 ),
             ]
