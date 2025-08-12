@@ -8,16 +8,16 @@ import pandas as pd
 import yfinance as yf
 
 
-class DataFetcher:
+class Extractor:
     """
-    A class to fetch and cache stock data, and calculate investment values over time
+    A class to extract stock data, and calculate investment values over time
 
     data_cache: dict, a cache to store fetched data
     """
 
     def __init__(self):
         """
-        Initialize the DataFetcher class
+        Initialize the Extractor class
         """
         self.data_cache = {}
 

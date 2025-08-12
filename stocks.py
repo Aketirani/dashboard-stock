@@ -5,7 +5,7 @@ import dash
 from dash import dcc
 
 from src.callbacks import Callbacks
-from src.data_fetcher import DataFetcher
+from src.extractor import Extractor
 from src.layout import Layout
 
 
@@ -15,7 +15,7 @@ class StockDashboard:
 
     app: Dash, the Dash application instance
     server: Flask, the Flask server instance used by Dash
-    data_fetcher: DataFetcher, an instance of the DataFetcher class to fetch stock data
+    extractor: Extractor, an instance of the Extractor class to extract stock data
     """
 
     def __init__(self):
@@ -24,7 +24,7 @@ class StockDashboard:
 
         self.app = dash.Dash(__name__)
         self.server = self.app.server
-        self.data_fetcher = DataFetcher()
+        self.data_fetcher = Extractor()
         self.app.layout = Layout.create_layout()
         self.app.layout.children.append(
             dcc.Interval(id="interval-component", interval=1 * 1000, n_intervals=0)
