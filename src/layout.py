@@ -21,7 +21,7 @@ class Layout:
                 html.H1("Stock Dashboard", style={"textAlign": "center"}),
                 dcc.Markdown(
                     """
-                    This dashboard provides real-time data and visualizations for the S&P 500 index.  
+                    This dashboard provides real-time data and visualizations for the S&P 500 index (SXR8.DE).  
                     You can view stock performance over various time periods and predict future investment values.
                     """,
                     style={
