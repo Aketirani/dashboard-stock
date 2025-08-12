@@ -76,11 +76,16 @@ class Callbacks:
                     )
                 )
 
+            local_tz = pytz.timezone("Europe/Copenhagen")
+            if df.index.tz is None:
+                df.index = df.index.tz_localize("UTC")
+            df.index = df.index.tz_convert(local_tz)
+
             fig = go.Figure()
             fig.add_trace(
                 go.Scatter(
                     x=df.index,
-                    y=df["Close"]["^GSPC"],
+                    y=df["Close"]["SXR8.DE"],
                     mode="lines",
                     name="S&P 500",
                     line=dict(color="white"),
@@ -94,9 +99,9 @@ class Callbacks:
             sign = "+" if percentage_change > 0 else ""
 
             fig.update_layout(
-                title=f"Period: {button_id.upper()}, Return: {sign}{percentage_change:.2f}%, Price: {end_price:.2f} DKK",
+                title=f"Period: {button_id.upper()}, Return: {sign}{percentage_change:.2f}%, Price: {end_price:.2f} €",
                 xaxis_title="Date",
-                yaxis_title="Price (DKK)",
+                yaxis_title="Price (€)",
                 template="plotly_dark",
             )
 
@@ -140,7 +145,6 @@ class Callbacks:
             :return: go.Figure, a Plotly figure with yearly returns and an average reference line
             """
             df = data_fetcher.calculate_yearly_returns()
-            df = df[df["Year"] >= 1995]
             if df.empty:
                 return go.Figure(
                     layout=go.Layout(

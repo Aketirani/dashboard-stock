@@ -49,11 +49,11 @@ class DataFetcher:
         try:
             with self.suppress_stdout():
                 if period == "1d":
-                    df = yf.download("^GSPC", period=period, interval="1m")
+                    df = yf.download("SXR8.DE", period=period, interval="1m")
                 elif period == "5d":
-                    df = yf.download("^GSPC", period=period, interval="1h")
+                    df = yf.download("SXR8.DE", period=period, interval="1h")
                 else:
-                    df = yf.download("^GSPC", period=period)
+                    df = yf.download("SXR8.DE", period=period)
             if df.empty:
                 raise ValueError("No data found for the given period")
             logging.info(f"Fetched data for period {period}: {df.head()}")
