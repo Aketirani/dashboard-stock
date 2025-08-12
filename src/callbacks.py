@@ -88,8 +88,8 @@ class Callbacks:
                 )
             )
 
-            start_price = df["Close"].iloc[0]
-            end_price = df["Close"].iloc[-1]
+            start_price = df["Close"].iloc[0].item()
+            end_price = df["Close"].iloc[-1].item()
             percentage_change = ((end_price - start_price) / start_price) * 100
             sign = "+" if percentage_change > 0 else ""
 
@@ -140,6 +140,7 @@ class Callbacks:
             :return: go.Figure, a Plotly figure with yearly returns and an average reference line
             """
             df = data_fetcher.calculate_yearly_returns()
+            df = df[df["Year"] >= 1995]
             if df.empty:
                 return go.Figure(
                     layout=go.Layout(
@@ -177,7 +178,7 @@ class Callbacks:
             )
 
             fig.update_layout(
-                title="Yearly Percentage Returns",
+                title=f"Average: {avg_percentage_change:.2f}%",
                 xaxis_title="Year",
                 yaxis_title="Return (%)",
                 template="plotly_dark",

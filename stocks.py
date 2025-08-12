@@ -36,4 +36,4 @@ dashboard = StockDashboard()
 server = dashboard.server
 
 if __name__ == "__main__":
-    dashboard.app.run_server(debug=True)
+    dashboard.app.run(debug=True)
