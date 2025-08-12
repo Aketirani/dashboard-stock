@@ -80,7 +80,7 @@ class Callbacks:
             fig.add_trace(
                 go.Scatter(
                     x=df.index,
-                    y=df["Close"],
+                    y=df["Close"]["^GSPC"],
                     mode="lines",
                     name="S&P 500",
                     line=dict(color="white"),
