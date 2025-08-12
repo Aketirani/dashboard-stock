@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import dash_daq as daq
 from dash import dcc, html
 
 
@@ -94,7 +93,7 @@ class Utils:
                         ),
                         Utils.create_input_field("Number of Years", "num-years", 20),
                         Utils.create_input_field(
-                            "Annual Interest Rate (%)", "annual-interest-rate", 7
+                            "Annual Interest Rate (%)", "annual-interest-rate", 10
                         ),
                         Utils.create_input_field(
                             "Ongoing Charges Rate (%)", "ongoing-charges-rate", 0.07
