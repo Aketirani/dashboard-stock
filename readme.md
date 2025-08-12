@@ -44,7 +44,7 @@ Access the live dashboard [here](https://dashboard-stock-ze75.onrender.com).
 - **Clock and Date**: Displays the current time and date on the dashboard.
 
 ### Preview
-![Figure1](images/WebPage.png)
+![Figure1](images/dashboard.png)
 
 ### Installation
 1. Create a user account on [GitHub](https://github.com/) if you don't already have one.
